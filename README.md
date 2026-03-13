@@ -1,4 +1,4 @@
-<div align="center">
+<div align="left">
 
 # Aperiodic
 
@@ -164,7 +164,5 @@ Exchange Feeds ──> Ingestion ──> Normalization (Atlas) ──> Metric Co
 <div align="center">
 
 **[Get Started](https://aperiodic.io)** | **[Python Client Docs](https://github.com/aperiodic-io/client)** | **[info@aperiodic.io](mailto:info@aperiodic.io)**
-
-Based in Ireland
 
 </div>
