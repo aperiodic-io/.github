@@ -2,7 +2,7 @@
 
 # Aperiodic
 
-### Institutional-Grade Market Microstructure Analytics
+### Institutional-Grade Market Microstructure Metrics
 
 **Turn flow dynamics into alpha in hours, not months.**
 
