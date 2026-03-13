@@ -83,47 +83,6 @@ Install the Python client:
 pip install aperiodic
 ```
 
-Pull microstructure data in a few lines:
-
-```python
-from datetime import date
-from aperiodic import get_metrics
-
-# Fetch hourly trade flow for BTC perpetuals
-df = get_metrics(
-    api_key="your-api-key",
-    metric="flow",
-    timestamp="true",
-    interval="1h",
-    exchange="binance-futures",
-    symbol="perpetual-BTC-USDT:USDT",
-    start_date=date(2024, 1, 1),
-    end_date=date(2024, 6, 30),
-)
-```
-
-Derivatives metrics work the same way:
-
-```python
-from aperiodic import get_derivative_metrics
-
-# Fetch funding rates
-funding = get_derivative_metrics(
-    api_key="your-api-key",
-    metric="funding",
-    timestamp="true",
-    interval="1h",
-    exchange="binance-futures",
-    symbol="perpetual-BTC-USDT:USDT",
-    start_date=date(2024, 1, 1),
-    end_date=date(2024, 6, 30),
-)
-```
-
-Both sync and async interfaces are available. Concurrent downloads are enabled by default for fast bulk retrieval.
-
----
-
 ## Architecture
 
 ```
