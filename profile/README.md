@@ -1,127 +1,113 @@
-<div align="left">
+<a href="https://aperiodic.io"><img src="assets/banner.png" alt="Aperiodic: microstructure metrics for crypto and RWA perps. A pixel waterfall of BTC-USDT's order book on Binance, bids in pale ink and asks in orange." width="100%" /></a>
 
 # Aperiodic
 
-### Institutional-Grade Market Microstructure Metrics
+**Liquidity, order flow and microstructure metrics for crypto and RWA perpetuals. Point-in-time and research-ready.**
 
-**Turn flow dynamics into alpha in hours, not months.**
+Aperiodic turns hundreds of terabytes of exchange data into point-in-time metrics: book depth and liquidity, order flow, spreads and slippage, funding, basis and open interest. Quant teams backtest and research on them directly, **100–1000x faster** than working from L2 data, without building the infrastructure.
 
-[Website](https://aperiodic.io) | [Python Client](https://github.com/aperiodic-io/client) | [Contact Us](mailto:info@aperiodic.io)
+<a href="https://aperiodic.io/free-data"><img src="assets/cta.png" alt="Try it without a key" height="44" /></a>
 
----
-
-</div>
-
-## The Problem
-
-Building tick-level data infrastructure is expensive, slow, and fragile. Quant teams spend months wiring up exchange feeds, normalizing symbology across venues, computing microstructure metrics, and maintaining pipelines — before a single signal is tested.
-
-## The Solution
-
-Aperiodic delivers **pre-computed, research-ready microstructure metrics** across the full exchange universe. We handle the ingestion, normalization, and computation so you can skip straight to alpha discovery.
-
-- **No infrastructure to build.** We process raw tick data and deliver clean, structured metrics via API.
-- **No symbology headaches.** Our open-source [Atlas](https://github.com/aperiodic-io/atlas) securities master normalizes 38+ exchanges into a unified contract model.
-- **No waiting.** Concurrent parquet downloads get years of history to your notebook in seconds.
+[aperiodic.io](https://aperiodic.io) · [Catalog](https://aperiodic.io/catalog) · [Indices](https://aperiodic.io/indices) · [Markets](https://aperiodic.io/markets) · [API docs](https://aperiodic.io/api-docs) · [Pricing](https://aperiodic.io/pricing)
 
 ---
 
-## Metrics
+## Indices
 
-We compute a comprehensive suite of market microstructure features at intervals from **1 minute to 1 day**.
+<a href="https://aperiodic.io/indices">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/indices-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="assets/indices-light.png" />
+    <img src="assets/indices-dark.png" alt="All nine Aperiodic indices on 288 five-minute bars of Binance's BTC-USDT perpetual, to 14:00 UTC on 14 May 2025, each a pixel lane under BTC's price, grouped into Liquidity, Flow and Positioning." width="100%" />
+  </picture>
+</a>
 
-### Trade Flow
-| Metric | What It Captures |
-|--------|-----------------|
-| **VTWAP** | Volume-time weighted average price |
-| **Flow** | Net signed trade flow and directional pressure |
-| **Trade Size** | Distribution of trade sizes and large-trade detection |
-| **Impact** | Price impact of trades |
-| **Range** | Intra-interval price range and volatility |
-| **Up/Down Ticks** | Tick direction frequency and momentum |
-| **Run Structure** | Consecutive same-direction trade sequences |
-| **Returns** | Interval returns at multiple horizons |
-| **Slippage** | Execution quality relative to mid-price |
+Each index answers one question about a market, in one column you can read at a glance. Three families, nine indices:
 
-### Order Book
-| Metric | What It Captures |
-|--------|-----------------|
-| **L1 Imbalance** | Top-of-book bid/ask pressure asymmetry |
-| **L1 Liquidity** | Best bid/offer depth and spread |
-| **L2 Imbalance** | Deeper book order flow imbalance |
-| **L2 Liquidity** | Multi-level depth and cumulative book shape |
+| Family | Code | Index | The question | |
+| --- | --- | --- | --- | --- |
+| **Liquidity** · what will it cost to trade? | `CST` | Cost | What does crossing the spread cost? | [Live](https://aperiodic.io/indices/cost) |
+| | `DPT` | Depth | How much can you trade at the best price? | [Live](https://aperiodic.io/indices/depth) |
+| | `IMP` | Impact | How far does $1M of buying move the price? | [Live](https://aperiodic.io/indices/impact) |
+| **Flow** · who is in control? | `PRS` | Pressure | Who won this bar? | Soon |
+| | `CNV` | Conviction | Who has been winning, bar after bar? | Soon |
+| **Positioning** · what is being built? | `OIB` | OI Build | Are positions being opened faster than usual? | Soon |
+| | `OID` | OI Divergence | Are positions moving more than price explains? | Soon |
+| | `LEV` | Leverage | How big are open positions next to a day of trading? | Soon |
+| | `CRW` | Crowding | Are traders paying to pile in? | Soon |
 
-### Derivatives
-| Metric | What It Captures |
-|--------|-----------------|
-| **Basis** | Futures-spot premium and term structure |
-| **Funding** | Perpetual funding rate and carry |
-| **Open Interest** | Position buildup and unwind signals |
-| **Derivative Price** | Mark, index, and contract-level pricing |
-
-### Aggregates
-OHLCV candles, VWAP, and TWAP — computed consistently across all supported venues.
+The Liquidity indices are live for every contract on [aperiodic.io/indices](https://aperiodic.io/indices), 15 minutes behind. Flow and Positioning are on their way.
 
 ---
 
-## Exchange Coverage
+## Try it in a minute
 
-| Exchange | Instruments |
-|----------|------------|
-| **Binance Futures** | Perpetuals |
-| **OKX** | Perpetuals |
-
-Full spot, futures, and perpetual symbology for **38+ exchanges** available through [Atlas](https://github.com/aperiodic-io/atlas), with data coverage expanding continuously.
-
----
-
-## Quick Start
-
-Install the Python client:
+Every dataset has a free preview slice (Binance BTC-USDT perpetual, 5m, May 2025). No account, no key.
 
 ```bash
-pip install aperiodic
+pip install "aperiodic[polars]"
 ```
 
-## Architecture
+```python
+from datetime import date
+from aperiodic import get_metrics
 
-```
-Exchange Feeds ──> Ingestion ──> Normalization (Atlas) ──> Metric Computation ──> Parquet Store
-                                                                                      │
-                                                                              Aperiodic API
-                                                                                      │
-                                                          Python Client / CLI ─── Your Research
+df = get_metrics(
+    metric="flow",
+    exchange="binance-futures",
+    symbol="perpetual-BTC-USDT:USDT",
+    interval="5m",
+    timestamp="exchange",
+    start_date=date(2025, 5, 1),
+    end_date=date(2025, 5, 31),
+    preview=True,
+)
 ```
 
-- **Atlas** normalizes raw exchange symbology into a stable, exchange-agnostic contract model
-- **Metrics engine** computes microstructure features from tick-level data
-- **API** serves pre-computed parquet files with parallel downloads for maximum throughput
-- **Client** handles concurrency, date-range filtering, and local concatenation automatically
+Or hand it to your agent. The MCP server works on the preview without a key, and signs you in with OAuth for the rest:
+
+```bash
+claude mcp add --transport http aperiodic https://aperiodic.io/mcp
+```
+
+It also works from claude.ai, Claude Desktop, ChatGPT and Cursor. Prefer the terminal? The [CLI](https://github.com/aperiodic-io/cli) pulls the same slice as Parquet.
 
 ---
 
-## Open Source
+## What's in it
 
-| Repository | Description |
-|------------|-------------|
-| [`client`](https://github.com/aperiodic-io/client) | Python client — sync & async API, concurrent downloads, Polars DataFrames |
-| [`atlas`](https://github.com/aperiodic-io/atlas) | Securities master — unified symbology across 38+ crypto exchanges |
-| [`cli`](https://github.com/aperiodic-io/cli) | Command-line interface for Aperiodic |
-| [`hftbacktest`](https://github.com/aperiodic-io/hftbacktest) | High-frequency trading backtester — limit orders, queue position, latency simulation (Rust) |
+**220 metrics in 19 datasets**, from 1 minute to 1 day (15 and 30 seconds on Institutional).
+
+| | Datasets |
+| --- | --- |
+| **Trades** | Flow (taker buy vs sell by trade size, with a toxicity score) · Impact (Kyle's λ, Amihud) · Slippage · Trade size · Run structure · Up/down ticks · Range · Returns and volatility |
+| **Order book** | L1 price · L1 liquidity (spread, depth) · L1 imbalance · L2 liquidity and L2 imbalance at 5, 10, 20 and 25 levels |
+| **Derivatives** | Funding · Basis · Open interest · Derivative price (mark, index, last) |
+| **Market data** | Candlesticks · VWAP / TWAP |
+
+**Coverage.** Every crypto perpetual on **Binance, OKX and Hyperliquid**, and **500+ RWA perpetuals** on stocks, ETFs, commodities and FX (including Hyperliquid HIP-3 markets), under the same API and the same [Atlas](https://github.com/aperiodic-io/atlas) symbols.
+
+**Ways in.** Parquet over REST · a live WebSocket stream · the [Python client](https://github.com/aperiodic-io/client) · the [CLI](https://github.com/aperiodic-io/cli) · the [MCP server](https://aperiodic.io/mcp) · S3 and in-your-cloud delivery on Institutional.
+
+**Free, no key.** [Markets](https://aperiodic.io/markets): every Binance, OKX and Hyperliquid perp, 15 minutes behind, with spread, depth, flow, funding, basis and Kyle's λ. Plus live funding rates for [Binance](https://aperiodic.io/funding-rates/binance), [OKX](https://aperiodic.io/funding-rates/okx) and [Hyperliquid](https://aperiodic.io/funding-rates/hyperliquid).
+
+**Pre-flight.** Test a trading agent on a recorded day of real order books before it trades real money: [aperiodic.io/preflight](https://aperiodic.io/preflight).
+
+Self-serve plans from $199 a month. [Pricing](https://aperiodic.io/pricing) · [Talk to us](https://aperiodic.io/booking) about Institutional.
 
 ---
 
-## Who It's For
+## Open source
 
-- **Quant Researchers** exploring microstructure signals without building tick infrastructure
-- **Systematic Traders** who need clean, normalized flow and book data across venues
-- **Fund Managers** looking for alternative data to enhance existing strategies
-- **Academics** studying market microstructure with production-quality datasets
+| Repository | |
+| --- | --- |
+| [`client`](https://github.com/aperiodic-io/client) | Python SDK: sync and async, concurrent Parquet downloads, Polars and pandas DataFrames |
+| [`cli`](https://github.com/aperiodic-io/cli) | Download any dataset as Parquet from the terminal; the preview needs no key |
+| [`atlas`](https://github.com/aperiodic-io/atlas) | Securities master: one symbology for crypto and RWA contracts across exchanges, always up to date |
+| [`tparquet`](https://github.com/aperiodic-io/tparquet) | Parquet for time series: tick files at about half their ZSTD size, lossless, and still Parquet |
+| [`notebooks`](https://github.com/aperiodic-io/notebooks) | Notebooks to get started with microstructure data |
+| [`crypto-data-vendors`](https://github.com/aperiodic-io/crypto-data-vendors) | 16 crypto market data vendors compared on 40 criteria, every fact sourced and dated (we're one of the columns) |
 
 ---
 
-<div align="center">
-
-**[Get Started](https://aperiodic.io)** | **[Python Client Docs](https://github.com/aperiodic-io/client)** | **[info@aperiodic.io](mailto:info@aperiodic.io)**
-
-</div>
+[aperiodic.io](https://aperiodic.io) · [info@aperiodic.io](mailto:info@aperiodic.io) · [llms.txt](https://aperiodic.io/llms.txt)
